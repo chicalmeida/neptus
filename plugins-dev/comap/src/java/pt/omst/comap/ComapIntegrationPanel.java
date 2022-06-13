@@ -58,6 +58,16 @@ public class ComapIntegrationPanel extends ConsolePanel {
         model = new WorldModel();
         Vector<GeoFeature> features = new Vector<>();
 
+        for (MarkElement el : getConsole().getMission().generateMapGroup().getAllObjectsOfType(MarkElement.class)) {
+            GeoFeature feature = new GeoFeature();
+            Vector<MapPoint> featurePoints = new Vector<>();
+            featurePoints.add(new MapPoint(el.getCenterLocation().getLatitudeRads(),
+                    el.getCenterLocation().getLongitudeRads(), 0));
+            feature.setPoints(featurePoints);
+            feature.setFeatureId(feature_id++);
+            features.add(feature);
+        }
+
         for (PathElement el : getConsole().getMission().generateMapGroup().getAllObjectsOfType(PathElement.class)) {
             Vector<LocationType> points = el.getShapePoints();
             if (points == null || points.size() < 3)
@@ -68,16 +78,6 @@ public class ComapIntegrationPanel extends ConsolePanel {
             for (LocationType loc : points)
                 featurePoints.add(new MapPoint(loc.getLatitudeRads(), loc.getLongitudeRads(), 0));
             feature.setPoints(featurePoints);
-            features.add(feature);
-        }
-
-        for (MarkElement el : getConsole().getMission().generateMapGroup().getAllObjectsOfType(MarkElement.class)) {
-            GeoFeature feature = new GeoFeature();
-            Vector<MapPoint> featurePoints = new Vector<>();
-            featurePoints.add(new MapPoint(el.getCenterLocation().getLatitudeRads(),
-                    el.getCenterLocation().getLongitudeRads(), 0));
-            feature.setPoints(featurePoints);
-            feature.setFeatureId(feature_id++);
             features.add(feature);
         }
 
