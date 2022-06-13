@@ -43,7 +43,7 @@ public class ComapIntegrationPanel extends ConsolePanel {
             if (f.getFeatureId() == id) {
                 if (f.getPoints().size() > 1) {
                     return Optional.of(new SurveyTask(id, id, SensorType.SIDESCAN, 750,
-                            System.currentTimeMillis() / 1000.0 + 1800));
+                            System.currentTimeMillis() / 1000.0 + 80000));
                 } else if (f.getPoints().size() == 1) {
                     return Optional
                             .of(new MoveTask(id, f.getPoints().get(0), System.currentTimeMillis() / 1000.0 + 1800));
@@ -102,6 +102,12 @@ public class ComapIntegrationPanel extends ConsolePanel {
             ImcMsgManager.getManager().sendMessageToSystem(msg, getConsole().getMainSystem());
         });
 
+        addMenuItem("Tools>CoMap>Send SynchAdmin/INTERRUPT", null, a -> {
+            SynchAdmin msg = new SynchAdmin();
+            msg.setOp(OP.INTERRUPT);
+            ImcMsgManager.getManager().sendMessageToSystem(msg, getConsole().getMainSystem());
+        });
+
         addMenuItem("Tools>CoMap>Send World Model", null, a -> {
             ImcMsgManager.getManager().sendMessageToSystem(getModel(), getConsole().getMainSystem());
         });
@@ -122,6 +128,12 @@ public class ComapIntegrationPanel extends ConsolePanel {
             TaskAdim msg = new TaskAdim();
             msg.setTid(feature_id);
             msg.setOp(TaskAdim.OP.UNASSIGN);
+            ImcMsgManager.getManager().sendMessageToSystem(msg, getConsole().getMainSystem());
+        });
+
+        addMenuItem("Tools>CoMap>Request Status", null, a -> {
+            TaskAdim msg = new TaskAdim();
+            msg.setOp(TaskAdim.OP.STATUS_REQUEST);
             ImcMsgManager.getManager().sendMessageToSystem(msg, getConsole().getMainSystem());
         });
     }
