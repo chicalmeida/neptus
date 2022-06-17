@@ -75,8 +75,10 @@ public class ComapIntegrationPanel extends ConsolePanel {
             Vector<MapPoint> featurePoints = new Vector<>();
             GeoFeature feature = new GeoFeature();
             feature.setFeatureId(feature_id++);
-            for (LocationType loc : points)
+            for (LocationType loc : points) {
+                loc.convertToAbsoluteLatLonDepth();
                 featurePoints.add(new MapPoint(loc.getLatitudeRads(), loc.getLongitudeRads(), 0));
+            }
             feature.setPoints(featurePoints);
             features.add(feature);
         }
