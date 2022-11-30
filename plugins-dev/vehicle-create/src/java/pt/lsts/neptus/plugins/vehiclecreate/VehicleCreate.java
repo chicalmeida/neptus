@@ -49,12 +49,7 @@ import pt.lsts.neptus.plugins.Popup;
 import pt.lsts.neptus.types.vehicle.VehicleType;
 import pt.lsts.neptus.util.FileUtil;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -64,7 +59,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -85,10 +80,11 @@ public class VehicleCreate extends ConsolePanel {
 
     @Override
     public void initSubPanel() {
-        Announce an = new Announce();
+        //Announce an = new Announce();
         JButton btn = new JButton("Test Add Vehicle");
         btn.addActionListener((e) -> {
-            start(an);
+            //onAnnounce(an);
+            drawInitialMessage();
         });
         add(btn);
     }
@@ -133,40 +129,48 @@ public class VehicleCreate extends ConsolePanel {
         vh.setName(a.getSysName());
         vh.setType(a.getSysTypeStr());
         String services = a.getServices();
-        System.out.println(services);
+        //System.out.println(services);
     }
 
     public void drawVehicleInfo(){
+        Announce an = new Announce();
+        onAnnounce(an);
         JDialog frame = new JDialog(this.getConsole());
         frame.setTitle("New Vehicle");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(500, 500);
+        frame.setSize(900, 500);
+
 
         JPanel panel = new JPanel(new MigLayout());
+
 
         //Properties
         JLabel p = new JLabel("Properties");
         panel.add(p, "wrap");
-        /*JLabel idLabel = new JLabel("Vehicle ID");
-        JTextField idTextField = new JTextField(vh.getId(), 15);*/
+        JLabel idLabel = new JLabel("Vehicle ID");
+        JTextField idTextField = new JTextField(15);
+        vh.setId(idTextField.getText());
         JLabel vehicleName = new JLabel("Vehicle Name");
         JTextField nameTextField = new JTextField(vh.getName(),30);
         JLabel vTypeLabel = new JLabel("Vehicle Type");
         JTextField vehicleType = new JTextField(vh.getType(), 15);
-        /*JLabel vModelLabel = new JLabel("Vehicle Model");
-        JTextField vehicleModel = new JTextField(vh.getModel(), 15);*/
+        JLabel vModelLabel = new JLabel("Vehicle Model");
+        JTextField vehicleModel = new JTextField(15);
+        vh.setModel(vehicleModel.getText());
 
-        /*panel.add(idLabel);
-        panel.add(idTextField, "wrap");*/
+        panel.add(idLabel);
+        panel.add(idTextField, "wrap");
         panel.add(vehicleName);
         panel.add(nameTextField, "wrap");
         panel.add(vTypeLabel);
         panel.add(vehicleType, "wrap");
-        /*panel.add(vModelLabel);
-        panel.add(vehicleModel, "wrap");*/
+        panel.add(vModelLabel);
+        panel.add(vehicleModel, "wrap");
+
+
 
         //Appearance
-        /*JLabel a = new JLabel("Appearance");
+        JLabel a = new JLabel("Appearance");
         panel.add(a, "wrap");
         FileNameExtensionFilter filter = new FileNameExtensionFilter("JPG & PNG Images", "jpg", "png");
         JLabel xsizeL = new JLabel("x-size");
@@ -226,7 +230,7 @@ public class VehicleCreate extends ConsolePanel {
         panel.add(duration);
         panel.add(durationT, "wrap");
         panel.add(coordSystem);
-        panel.add(coordS, "wrap");*/
+        panel.add(coordS, "wrap");
 
 
         JButton bt = new JButton("Confirm");
@@ -237,9 +241,15 @@ public class VehicleCreate extends ConsolePanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 writeXML();
-                System.out.println("Done creating XML File");
+                //System.out.println("Done creating XML File");
             }
         });
+
+        JScrollPane scrollFrame = new JScrollPane(panel);
+        panel.setAutoscrolls(true);
+        scrollFrame.setPreferredSize(new Dimension( 800,300));
+        scrollFrame.
+        frame.add(scrollFrame);
 
         frame.add(panel, BorderLayout.CENTER);
 
@@ -253,7 +263,16 @@ public class VehicleCreate extends ConsolePanel {
         // TODO podes fazer algum processamento para ver se o veículo não é cenhecido
         // e depois poder chamar o teu start, ou chamas logo para testar
         //ou atraves do nome do ficheiro ou do owner?
-        msg.getOwner();
+        File file=new File("./vehicles-defs");
+        File files[]=  file.listFiles();
+        for(File f:files){
+            if(f.getName().contains(msg.getSysName())){
+                System.out.println("I already exist!");
+            }
+            else{
+                getParams(msg);
+            }
+        }
     }
 
     public void start(Announce announce){
@@ -284,9 +303,9 @@ public class VehicleCreate extends ConsolePanel {
             root.appendChild(properties);
 
             // set an attribute to staff element
-            /*Attr attr = document.createAttribute("id");
+            Attr attr = document.createAttribute("id");
             attr.setValue(vh.getId());
-            properties.setAttributeNode(attr);*/
+            properties.setAttributeNode(attr);
 
             //you can also use staff.setAttribute("id", "1") for this
 
@@ -300,9 +319,9 @@ public class VehicleCreate extends ConsolePanel {
             type.appendChild(document.createTextNode(vh.getType()));
             properties.appendChild(type);
 
-            /*Element model = document.createElement("model");
+            Element model = document.createElement("model");
             type.appendChild(document.createTextNode(vh.getModel()));
-            properties.appendChild(model);*/
+            properties.appendChild(model);
 
             Element appearance = document.createElement("appearance");
             properties.appendChild(appearance);
