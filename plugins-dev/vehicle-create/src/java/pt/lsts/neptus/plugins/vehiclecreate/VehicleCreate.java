@@ -54,6 +54,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -64,6 +65,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.LinkedList;
+
+import static java.lang.Float.parseFloat;
 
 @PluginDescription(name = "Vehicle Create",description="Add vehicle")
 @Popup(width = 300, height = 300)
@@ -141,7 +144,12 @@ public class VehicleCreate extends ConsolePanel {
         frame.setSize(900, 500);
 
 
-        JPanel panel = new JPanel(new MigLayout());
+        JPanel panel = new JPanel(new MigLayout("insets 0 ",
+                // hardcode fixed column width and fixed column gap
+                "[50lp, fill]10lp"
+                // hardcode fixed height and a zero row gap
+                //"[20lp, fill]0"));
+        ));
 
 
         //Properties
@@ -149,14 +157,12 @@ public class VehicleCreate extends ConsolePanel {
         panel.add(p, "wrap");
         JLabel idLabel = new JLabel("Vehicle ID");
         JTextField idTextField = new JTextField(15);
-        vh.setId(idTextField.getText());
         JLabel vehicleName = new JLabel("Vehicle Name");
         JTextField nameTextField = new JTextField(vh.getName(),30);
         JLabel vTypeLabel = new JLabel("Vehicle Type");
         JTextField vehicleType = new JTextField(vh.getType(), 15);
         JLabel vModelLabel = new JLabel("Vehicle Model");
         JTextField vehicleModel = new JTextField(15);
-        vh.setModel(vehicleModel.getText());
 
         panel.add(idLabel);
         panel.add(idTextField, "wrap");
@@ -172,14 +178,16 @@ public class VehicleCreate extends ConsolePanel {
         //Appearance
         JLabel a = new JLabel("Appearance");
         panel.add(a, "wrap");
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("JPG & PNG Images", "jpg", "png");
+        //FileNameExtensionFilter filter = new FileNameExtensionFilter("JPG & PNG Images", "jpg", "png");
         JLabel xsizeL = new JLabel("x-size");
         JTextField xSizeField = new JTextField(8);
         JLabel ysizeL = new JLabel("y-size");
         JTextField ySizeField = new JTextField(8);
         JLabel zsizeL = new JLabel("z-size");
         JTextField zSizeField = new JTextField(8);
-        JLabel topimageL = new JLabel("Top Image");
+
+
+        /*JLabel topimageL = new JLabel("Top Image");
         JFileChooser topImage = new JFileChooser();
         topImage.setFileFilter(filter);
         JLabel sideimageL = new JLabel("Side Image");
@@ -190,14 +198,14 @@ public class VehicleCreate extends ConsolePanel {
         bottomImage.setFileFilter(filter);
         JLabel presentationimageL = new JLabel("Presentation Image");
         JFileChooser presentationImage = new JFileChooser();
-        presentationImage.setFileFilter(filter);
+        presentationImage.setFileFilter(filter);*/
 
         panel.add(xsizeL);
         panel.add(xSizeField);
         panel.add(ysizeL);
         panel.add(ySizeField);
-        panel.add(zsizeL);
-        panel.add(zSizeField, "wrap");
+        panel.add(zsizeL, "wrap");
+        /*panel.add(zSizeField, "wrap");
         panel.add(topimageL);
         panel.add(topImage, "wrap");
         panel.add(sideimageL);
@@ -205,7 +213,7 @@ public class VehicleCreate extends ConsolePanel {
         panel.add(bottomimageL);
         panel.add(bottomImage, "wrap");
         panel.add(presentationimageL);
-        panel.add(presentationImage, "wrap");
+        panel.add(presentationImage, "wrap");*/
 
         //Limits
         JLabel l = new JLabel("Limits");
@@ -240,7 +248,13 @@ public class VehicleCreate extends ConsolePanel {
         bt.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                vh.setId(idTextField.getText());
+                vh.setModel(vehicleModel.getText());
+                vh.setXSize(parseFloat(xSizeField.getText()));
+                vh.setYSize(parseFloat(ySizeField.getText()));
+                vh.setZSize(parseFloat(zSizeField.getText()));
                 writeXML();
+                frame.dispose();
                 //System.out.println("Done creating XML File");
             }
         });
@@ -248,7 +262,12 @@ public class VehicleCreate extends ConsolePanel {
         JScrollPane scrollFrame = new JScrollPane(panel);
         panel.setAutoscrolls(true);
         scrollFrame.setPreferredSize(new Dimension( 800,300));
-        scrollFrame.
+        scrollFrame = new JScrollPane();
+        scrollFrame.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollFrame.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        // scrollPane.setBorder(BorderFactory.createEmptyBorder(3,5,3,5));
+        // scrollPane.setPreferredSize(new Dimension(800,600));
+        scrollFrame.setViewportView(panel);
         frame.add(scrollFrame);
 
         frame.add(panel, BorderLayout.CENTER);
@@ -282,8 +301,7 @@ public class VehicleCreate extends ConsolePanel {
     }
 
     public void writeXML(){
-        //final String xmlFilePath = "C:\\Users\\Francisca\\Desktop\\UNI\\LSTS\\xmlfile.xml";
-        // FIXME Podes fazer assim para não depender de correr só no teu PC
+
         final String xmlFilePath = "xmlfile.xml"; //Fica no root da pasta onde tens o Neptus
 
         try {
@@ -323,8 +341,13 @@ public class VehicleCreate extends ConsolePanel {
             type.appendChild(document.createTextNode(vh.getModel()));
             properties.appendChild(model);
 
+            //appearance element
             Element appearance = document.createElement("appearance");
             properties.appendChild(appearance);
+
+
+
+
 
 
             // department elements
@@ -418,6 +441,7 @@ public class VehicleCreate extends ConsolePanel {
             //transform the DOM Object to an XML File
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             DOMSource domSource = new DOMSource(document);
             StreamResult streamResult = new StreamResult(new File(xmlFilePath));
 
