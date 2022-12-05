@@ -146,9 +146,9 @@ public class VehicleCreate extends ConsolePanel {
 
         JPanel panel = new JPanel(new MigLayout("insets 0 ",
                 // hardcode fixed column width and fixed column gap
-                "[50lp, fill]10lp"
+                "[]10lp",
                 // hardcode fixed height and a zero row gap
-                //"[20lp, fill]0"));
+                "[]10lp"
         ));
 
 
@@ -158,7 +158,7 @@ public class VehicleCreate extends ConsolePanel {
         JLabel idLabel = new JLabel("Vehicle ID");
         JTextField idTextField = new JTextField(15);
         JLabel vehicleName = new JLabel("Vehicle Name");
-        JTextField nameTextField = new JTextField(vh.getName(),30);
+        JTextField nameTextField = new JTextField(vh.getName(),15);
         JLabel vTypeLabel = new JLabel("Vehicle Type");
         JTextField vehicleType = new JTextField(vh.getType(), 15);
         JLabel vModelLabel = new JLabel("Vehicle Model");
@@ -180,11 +180,11 @@ public class VehicleCreate extends ConsolePanel {
         panel.add(a, "wrap");
         //FileNameExtensionFilter filter = new FileNameExtensionFilter("JPG & PNG Images", "jpg", "png");
         JLabel xsizeL = new JLabel("x-size");
-        JTextField xSizeField = new JTextField(8);
+        JTextField xSizeField = new JTextField(5);
         JLabel ysizeL = new JLabel("y-size");
-        JTextField ySizeField = new JTextField(8);
+        JTextField ySizeField = new JTextField(5);
         JLabel zsizeL = new JLabel("z-size");
-        JTextField zSizeField = new JTextField(8);
+        JTextField zSizeField = new JTextField(5);
 
 
         /*JLabel topimageL = new JLabel("Top Image");
@@ -204,9 +204,9 @@ public class VehicleCreate extends ConsolePanel {
         panel.add(xSizeField);
         panel.add(ysizeL);
         panel.add(ySizeField);
-        panel.add(zsizeL, "wrap");
-        /*panel.add(zSizeField, "wrap");
-        panel.add(topimageL);
+        panel.add(zsizeL);
+        panel.add(zSizeField, "wrap");
+        /*panel.add(topimageL);
         panel.add(topImage, "wrap");
         panel.add(sideimageL);
         panel.add(sideImage, "wrap");
@@ -441,16 +441,19 @@ public class VehicleCreate extends ConsolePanel {
             //transform the DOM Object to an XML File
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
+
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
             DOMSource domSource = new DOMSource(document);
             StreamResult streamResult = new StreamResult(new File(xmlFilePath));
+            StreamResult result = new StreamResult(System.out);
 
             // If you use
             // StreamResult result = new StreamResult(System.out);
             // the output will be pushed to the standard output ...
             // You can use that for debugging
 
-            transformer.transform(domSource, streamResult);
+            transformer.transform(domSource, result);
 
 
         } catch (ParserConfigurationException pce) {

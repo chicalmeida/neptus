@@ -1,1 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?><system><properties id=""><name>ccu-francisca-208-1</name><type>CCU</type><model/><appearance/></properties><protocols-supported/></system>
+<?xml version="1.0" encoding="UTF-8"?><system>
+<properties id="12">
+<name>ccu-lsts-1-29</name>
+<type>CCU1</type>
+<model/>
+<appearance/>
+</properties>
+<protocols-supported/>
+</system>
