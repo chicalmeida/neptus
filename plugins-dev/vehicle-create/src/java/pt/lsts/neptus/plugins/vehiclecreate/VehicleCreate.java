@@ -338,7 +338,7 @@ public class VehicleCreate extends ConsolePanel {
             properties.appendChild(type);
 
             Element model = document.createElement("model");
-            type.appendChild(document.createTextNode(vh.getModel()));
+            model.appendChild(document.createTextNode(vh.getModel()));
             properties.appendChild(model);
 
             //appearance element
