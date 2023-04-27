@@ -15,6 +15,10 @@ public class DvsSonarData {
 
     private DvsHeader header;
 
+    public DvsSonarData(){
+
+    }
+
     public long getTimestamp() {
         return this.timestamp;
     }
@@ -84,8 +88,13 @@ public class DvsSonarData {
         }
         setLat(buffer.get(18));
         setLon(buffer.get(26));
-        setSpeed(buffer.get(30));
-        setHeading(buffer.get(34));
+        setSpeed(buffer.get(32));
+        setHeading(buffer.get(36));
     }
 
+    public float getRange() {
+        float range;
+        range=this.header.getnSamples()*this.header.getSampleRes();
+        return range;
+    }
 }

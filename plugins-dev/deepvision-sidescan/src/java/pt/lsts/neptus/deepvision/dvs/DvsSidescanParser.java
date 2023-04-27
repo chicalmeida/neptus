@@ -141,7 +141,7 @@ public class DvsSidescanParser implements SidescanParser {
                 
                 fData = SidescanUtil.applyNormalizationAndTVG(fData, pboard.getRange(), params);
                 
-                list.add(new SidescanLine(ping.get(0).getTimestamp(), ping.get(0).getRange(), pose, ping.get(0).getFrequency(), fData));
+                list.add(new SidescanLine(ping.get(0).getTimestamp(), ping.get(0).getRange(), pose, 1, fData)); //TODO: frequency: ping.get(0).getFrequency()
             }
 
             try {

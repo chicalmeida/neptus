@@ -47,7 +47,7 @@ public class DvsHeader {
         return left;
     }
 
-    public void setRight(int right) {
+    public void setRight(int ight) {
         this.right = right;
     }
 
