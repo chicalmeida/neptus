@@ -13,6 +13,8 @@ public class DvsSonarData {
     private long timestamp;
     private int numberOfSamples;
 
+    private int returnSize;
+
     private DvsHeader header;
 
     public DvsSonarData(){
@@ -77,24 +79,30 @@ public class DvsSonarData {
         this.speed = speed;
     }
 
-    void parser(ByteBuffer buffer){
-        header.parse(buffer);
-        int n;
-        if((header.isLeft()==1) && (header.isRight()==1)){
-            n=header.getnSamples()*2;
+    public void setReturnSize(int returnSize) {
+        this.returnSize = returnSize;
+    }
+
+    public int getReturnSize() {
+        return returnSize;
+    }
+
+    void parsePing(ByteBuffer buffer){
+        if((header.isLeft() == 1) && (header.isRight() == 1)){
+            returnSize = header.getnSamples() * 2;
         }
         else{
-            n=header.getnSamples();
+            returnSize = header.getnSamples();
         }
-        setLat(buffer.get(18));
-        setLon(buffer.get(26));
-        setSpeed(buffer.get(32));
-        setHeading(buffer.get(36));
+        setLat(buffer.getDouble(0));
+        setLon(buffer.getDouble(8));
+        setSpeed(buffer.getFloat(16));
+        setHeading(buffer.getFloat(20));
     }
 
     public float getRange() {
         float range;
-        range=this.header.getnSamples()*this.header.getSampleRes();
+        range = this.header.getnSamples() * this.header.getSampleRes();
         return range;
     }
 }

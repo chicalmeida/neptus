@@ -2,12 +2,15 @@ package pt.lsts.neptus.deepvision.dvs;
 
 import pt.lsts.neptus.NeptusLog;
 import scala.sys.process.ProcessBuilderImpl;
+import sun.jvm.hotspot.debugger.win32.coff.DebugVC50SrcModFileDesc;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
@@ -26,6 +29,9 @@ public class DvsParser {
     final static int SUBSYS_HIGH = 21;
 
     private DvsIndex index;
+
+    private DvsHeader header = new DvsHeader();
+    private DvsSonarData ping = new DvsSonarData();
 
     private long curPosition = 0;
     public DvsParser(File f){
@@ -59,7 +65,7 @@ public class DvsParser {
     }
 
     public long getLastTimeStamp() {
-        return 0;
+        return (long)this.header.getLineRate();//TODO:*ping?
     }
 
     public DvsIndex getIndex() {
@@ -89,8 +95,6 @@ public class DvsParser {
     }
 
     public void generateIndex(){
-        DvsHeader header = new DvsHeader();
-        DvsSonarData ping = new DvsSonarData();
 
         long count = 0;
         long pos = 0;
@@ -100,10 +104,14 @@ public class DvsParser {
         long minTimestampHigh = Long.MAX_VALUE;
         long minTimestampLow = Long.MAX_VALUE;
 
-        int headerSize=18;
+        int headerSize=14;
+        int posSize = 24;
+
+        int version_size = 4;
+        curPosition += version_size;
 
         try{
-            while(true){
+            while(true) {
                 long channelSize = channel.size();
                 if (curPosition + headerSize >= channelSize) {
                     break;
@@ -114,11 +122,53 @@ public class DvsParser {
                 header.parse(buf);
                 curPosition += headerSize;
 
+
+                ping.setHeader(header);
+
+                if(curPosition + posSize >= channelSize){
+                    break;
+                }
+                buf = channel.map(FileChannel.MapMode.READ_ONLY, curPosition, posSize);
+                ping.parsePing(buf);
+                curPosition += posSize;
+
+                long frequency = 340;
+                long t = curPosition;
+                int subsystem = 0;
+
+
+
+
             }
         }catch (Exception e) {
             e.printStackTrace();
         }
 
+    }
+    public boolean loadIndex() {
+        try {
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(indexPath));
+            index = (DvsIndex) in.readObject();
+
+            Long[] tslisthigh;
+            Long[] tslistlow;
+
+            tslisthigh = index.positionMapHigh.keySet().toArray(new Long[] {});
+            tslistlow = index.positionMapLow.keySet().toArray(new Long[] {});
+
+            Arrays.sort(tslisthigh);
+            Arrays.sort(tslistlow);
+
+            tslist.put(SUBSYS_LOW, tslistlow);
+            tslist.put(SUBSYS_HIGH, tslisthigh);
+
+            in.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
 }

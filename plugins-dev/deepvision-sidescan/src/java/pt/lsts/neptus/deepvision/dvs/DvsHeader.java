@@ -47,7 +47,7 @@ public class DvsHeader {
         return left;
     }
 
-    public void setRight(int ight) {
+    public void setRight(int right) {
         this.right = right;
     }
 
@@ -57,11 +57,11 @@ public class DvsHeader {
 
 
     void parse(ByteBuffer buffer){
-        setSampleRes(buffer.get(4));
-        setLineRate(buffer.get(8));
-        setnSamples(buffer.get(12));
-        setLeft(buffer.get(16));
-        setRight(buffer.get(17));
+        setSampleRes(buffer.getFloat(0));
+        setLineRate(buffer.getFloat(4));
+        setnSamples(buffer.getInt(8));
+        setLeft(buffer.get(12));
+        setRight(buffer.get(13));
     }
 
     public int getChannel() {
